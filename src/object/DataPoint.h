@@ -255,7 +255,7 @@ namespace Object {
     /**
      * @brief Set Select/Execute bit control for commands and set-points
     */
-    void setSelectCommand(bool selectExecuteFlag);
+    void setSelectCommand(uint8_t selectExecuteFlag);
 
     std::uint64_t getUpdatedAt_ms() const;
 

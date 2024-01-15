@@ -327,8 +327,20 @@ void DataPoint::setValueEx(const double new_value, const Quality &new_quality,
                                 std::to_string(informationObjectAddress));
 }
 
-void DataPoint::setSelectCommand(bool selectExecuteFlag){
+void DataPoint::setSelectCommand(uint8_t selectExecuteFlag){
   bool const currentCommand = selectCommand.load();
+  DEBUG_PRINT(Debug::Point, "setSelectCommand] prev: " + std::to_string(currentCommand) +
+                                " new: " + std::to_string(selectExecuteFlag) + "at IOA " +
+                                std::to_string(informationObjectAddress));
+
+  if (selectExecuteFlag < 0 || selectExecuteFlag > 1){
+    std::cerr 
+        << "[c104.Point.setSelectCommand] Cannot set select/execute flag"
+           " bit other than 0 and 1 at IOA " 
+        << std::to_string(informationObjectAddress) << std::endl;
+    return;
+  }
+  
   switch (type) {
     case C_SC_NA_1:
     case C_SC_TA_1:

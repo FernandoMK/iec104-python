@@ -1836,7 +1836,7 @@ PYBIND11_MODULE(c104, m) {
       .def_property(
            "selectCommand", &Object::DataPoint::getSelectCommand,
            [](Object::DataPoint &d1, const py::object &o) {
-             d1.setSelectCommand(py::cast<bool>(o));
+             d1.setSelectCommand(py::cast<int>(o));
              return;
            },
            "bool: Select/Execute bit flag.", py::return_value_policy::copy)
