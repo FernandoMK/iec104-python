@@ -1833,6 +1833,13 @@ PYBIND11_MODULE(c104, m) {
             d1.setValue(py::cast<double>(o));
           },
           "float: value", py::return_value_policy::copy)
+      .def_property(
+           "selectCommand", &Object::DataPoint::getSelectCommand,
+           [](Object::DataPoint &d1, const py::object &o) {
+             d1.setSelectCommand(py::cast<bool>(o));
+             return;
+           },
+           "bool: Select/Execute bit flag.", py::return_value_policy::copy)
       .def_property_readonly(
           "value_uint32", &Object::DataPoint::getValueAsUInt32,
           "int: value formatted as unsigned integer (read-only)",

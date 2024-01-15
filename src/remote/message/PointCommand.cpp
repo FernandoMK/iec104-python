@@ -45,31 +45,31 @@ PointCommand::PointCommand(std::shared_ptr<Object::DataPoint> point)
   // bool Single Point Command
   case C_SC_NA_1: {
     io = (InformationObject)SingleCommand_create(
-        nullptr, informationObjectAddress, (bool)point->getValue(), false,
-        static_cast<uint8_t>(quality.load()));
+        nullptr, informationObjectAddress, (bool)point->getValue(), 
+        (bool)point->getSelectCommand(), static_cast<uint8_t>(quality.load()));
   } break;
 
     // bool Single Point Command + Extended Time
   case C_SC_TA_1: {
     io = (InformationObject)SingleCommandWithCP56Time2a_create(
-        nullptr, informationObjectAddress, (bool)point->getValue(), false,
-        static_cast<uint8_t>(quality.load()), &time);
+        nullptr, informationObjectAddress, (bool)point->getValue(), 
+        (bool)point->getSelectCommand(), static_cast<uint8_t>(quality.load()), &time);
   } break;
 
     // enum Double Point Command [INVALID|OFF|ON|INVALID]
   case C_DC_NA_1: {
     auto state = (DoublePointValue)point->getValue();
     io = (InformationObject)DoubleCommand_create(
-        nullptr, informationObjectAddress, state, false,
-        static_cast<uint8_t>(quality.load()));
+        nullptr, informationObjectAddress, state, 
+        (bool)point->getSelectCommand(), static_cast<uint8_t>(quality.load()));
   } break;
 
     // enum Double Point Command [INVALID|OFF|ON|INVALID] + Extended Time
   case C_DC_TA_1: {
     auto state = (DoublePointValue)point->getValue();
     io = (InformationObject)DoubleCommandWithCP56Time2a_create(
-        nullptr, informationObjectAddress, state, false,
-        static_cast<uint8_t>(quality.load()), &time);
+        nullptr, informationObjectAddress, state, 
+        (bool)point->getSelectCommand(), static_cast<uint8_t>(quality.load()), &time);
   } break;
 
     // int [INVALID,LOWER,HIGHER,INVALID] Regulating StepPosition Command
@@ -77,8 +77,8 @@ PointCommand::PointCommand(std::shared_ptr<Object::DataPoint> point)
   case C_RC_NA_1: {
     auto state = (StepCommandValue)point->getValue();
     io = (InformationObject)StepCommand_create(
-        nullptr, informationObjectAddress, state, false,
-        static_cast<uint8_t>(quality.load()));
+        nullptr, informationObjectAddress, state, 
+        (bool)point->getSelectCommand(), static_cast<uint8_t>(quality.load()));
   } break;
 
     // int [INVALID,LOWER,HIGHER,INVALID] Regulating StepPosition Command
@@ -86,7 +86,8 @@ PointCommand::PointCommand(std::shared_ptr<Object::DataPoint> point)
   case C_RC_TA_1: {
     auto state = (StepCommandValue)point->getValue();
     io = (InformationObject)StepCommandWithCP56Time2a_create(
-        nullptr, informationObjectAddress, state, false,
+        nullptr, informationObjectAddress, state, 
+        (bool)point->getSelectCommand(),
         static_cast<uint8_t>(quality.load()), &time);
   } break;
 
@@ -105,44 +106,44 @@ PointCommand::PointCommand(std::shared_ptr<Object::DataPoint> point)
     // float Setpoint Command (NORMALIZED)
   case C_SE_NA_1: {
     io = (InformationObject)SetpointCommandNormalized_create(
-        nullptr, informationObjectAddress, point->getValueAsFloat(), false,
-        static_cast<uint8_t>(quality.load()));
+        nullptr, informationObjectAddress, point->getValueAsFloat(), 
+        (bool)point->getSelectCommand(), static_cast<uint8_t>(quality.load()));
   } break;
 
     // float Setpoint Command (NORMALIZED) + Extended Time
   case C_SE_TA_1: {
     io = (InformationObject)SetpointCommandNormalizedWithCP56Time2a_create(
-        nullptr, informationObjectAddress, point->getValueAsFloat(), false,
-        static_cast<uint8_t>(quality.load()), &time);
+        nullptr, informationObjectAddress, point->getValueAsFloat(), 
+        (bool)point->getSelectCommand(), static_cast<uint8_t>(quality.load()), &time);
   } break;
 
     // int Setpoint Command (SCALED)
   case C_SE_NB_1: {
     io = (InformationObject)SetpointCommandScaled_create(
-        nullptr, informationObjectAddress, point->getValueAsInt32(), false,
-        static_cast<uint8_t>(quality.load()));
+        nullptr, informationObjectAddress, point->getValueAsInt32(), 
+        (bool)point->getSelectCommand(), static_cast<uint8_t>(quality.load()));
   } break;
 
     // int Setpoint Command (SCALED) + Extended Time
     // Valid cause of transmission: 1,2,3,5,20-36
   case C_SE_TB_1: {
     io = (InformationObject)SetpointCommandScaledWithCP56Time2a_create(
-        nullptr, informationObjectAddress, point->getValueAsInt32(), false,
-        static_cast<uint8_t>(quality.load()), &time);
+        nullptr, informationObjectAddress, point->getValueAsInt32(), 
+        (bool)point->getSelectCommand(), static_cast<uint8_t>(quality.load()), &time);
   } break;
 
     // float Setpoint Command (SHORT)
   case C_SE_NC_1: {
     io = (InformationObject)SetpointCommandShort_create(
-        nullptr, informationObjectAddress, point->getValueAsFloat(), false,
-        static_cast<uint8_t>(quality.load()));
+        nullptr, informationObjectAddress, point->getValueAsFloat(), 
+        (bool)point->getSelectCommand(), static_cast<uint8_t>(quality.load()));
   } break;
 
     // float Setpoint Command (SHORT) + Extended Time
   case C_SE_TC_1: {
     io = (InformationObject)SetpointCommandShortWithCP56Time2a_create(
-        nullptr, informationObjectAddress, point->getValueAsFloat(), false,
-        static_cast<uint8_t>(quality.load()), &time);
+        nullptr, informationObjectAddress, point->getValueAsFloat(), 
+        (bool)point->getSelectCommand(), static_cast<uint8_t>(quality.load()), &time);
   } break;
 
   default:

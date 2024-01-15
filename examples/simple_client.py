@@ -15,6 +15,8 @@ def main():
     # command point preparation
     command = station.add_point(io_address=12, type=c104.Type.C_RC_TA_1)
     command.value = c104.Step.HIGHER
+    command.selectCommand = False # False = Execute, True = Select
+
 
     # start
     client.start()

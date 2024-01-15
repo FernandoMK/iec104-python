@@ -165,6 +165,8 @@ void DataPoint::setQuality(const Quality &new_quality) {
 
 double DataPoint::getValue() const { return value; }
 
+bool DataPoint::getSelectCommand() const { return selectCommand; }
+
 std::int32_t DataPoint::getValueAsInt32() const { return (int)value; }
 
 float DataPoint::getValueAsFloat() const { return (float)value; }
@@ -324,6 +326,34 @@ void DataPoint::setValueEx(const double new_value, const Quality &new_quality,
                                 Quality_toString(new_quality) + ") at IOA " +
                                 std::to_string(informationObjectAddress));
 }
+
+void DataPoint::setSelectCommand(bool selectExecuteFlag){
+  bool const currentCommand = selectCommand.load();
+  switch (type) {
+    case C_SC_NA_1:
+    case C_SC_TA_1:
+    case C_DC_NA_1:
+    case C_DC_TA_1:
+    case C_RC_NA_1:
+    case C_RC_TA_1:
+    case C_BO_NA_1:
+    case C_BO_TA_1:
+    case C_SE_NA_1:
+    case C_SE_TA_1:
+    case C_SE_NB_1:
+    case C_SE_TB_1:
+    case C_SE_NC_1:
+    case C_SE_TC_1:
+      if (currentCommand != selectExecuteFlag){
+        selectCommand.store(selectExecuteFlag);
+      }
+      break;
+    default:
+      std::cerr << "[c104.Point.setSelectCommand] Cannot set select/execute flag bit for non-commands/setpoint points." << std::endl;
+      break;
+  }
+}
+  
 
 uint64_t DataPoint::getUpdatedAt_ms() const { return updatedAt_ms.load(); }
 
