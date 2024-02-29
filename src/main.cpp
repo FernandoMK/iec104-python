@@ -489,6 +489,70 @@ PYBIND11_MODULE(c104, m) {
   py_quality.attr("__repr__") = py::cpp_function(
       &Quality_toString, py::name("__repr__"), py::is_method(py_quality));
 
+  auto py_qualifier_of_command =
+    py::enum_<QualifierOfCommand_>(m, "QualifierOfCommand",
+                                  "This enum contains all qualifier of commands")
+        .value("NoAdditionalDefinition", QualifierOfCommand_::NoAdditionalDefinition)
+        .value("ShortPulse", QualifierOfCommand_::ShortPulse)
+        .value("LongPulse", QualifierOfCommand_::LongPulse)
+        .value("Persistent", QualifierOfCommand_::Persistent)
+        .def(py::init([]() { return QualifierOfCommand_::NoAdditionalDefinition; }))
+        .def("__str__", &QualifierOfCommand_toString)
+        .def("__repr__", &QualifierOfCommand_toString)
+        .def(
+            "__and__", [](const QualifierOfCommand_ &a, QualifierOfCommand_ b) { return a & b; },
+            py::is_operator())
+        .def(
+              "__rand__", [](const QualifierOfCommand_ &a, QualifierOfCommand_ b) { return a & b; },
+              py::is_operator())
+          .def(
+              "__or__", [](const QualifierOfCommand_ &a, QualifierOfCommand_ b) { return a | b; },
+              py::is_operator())
+          .def(
+              "__ror__", [](const QualifierOfCommand_ &a, QualifierOfCommand_ b) { return a | b; },
+              py::is_operator())
+          .def(
+              "__xor__", [](const QualifierOfCommand_ &a, QualifierOfCommand_ b) { return a ^ b; },
+              py::is_operator())
+          .def(
+              "__rxor__", [](const QualifierOfCommand_ &a, QualifierOfCommand_ b) { return a ^ b; },
+              py::is_operator())
+          .def(
+              "__invert__", [](const QualifierOfCommand_ &a) { return ~a; },
+              py::is_operator())
+          .def(
+              "__iand__",
+              [](QualifierOfCommand_ &a, QualifierOfCommand_ b) {
+                a &= b;
+                return a;
+              },
+              py::is_operator())
+          .def(
+              "__ior__",
+              [](QualifierOfCommand_ &a, QualifierOfCommand_ b) {
+                a |= b;
+                return a;
+              },
+              py::is_operator())
+          .def(
+              "__ixor__",
+              [](QualifierOfCommand_ &a, QualifierOfCommand_ b) {
+                a ^= b;
+                return a;
+              },
+              py::is_operator())
+          .def(
+              "__contains__",
+              [](const QualifierOfCommand_ &mode, const QualifierOfCommand_ &flag) {
+                return test(mode, flag);
+              },
+              py::is_operator());
+  
+  py_qualifier_of_command.attr("__str__") = py::cpp_function(
+    &QualifierOfCommand_toString, py::name("__str__"), py::is_method(py_qualifier_of_command));
+  py_qualifier_of_command.attr("__repr__") = py::cpp_function(
+    &QualifierOfCommand_toString, py::name("__repr__"), py::is_method(py_qualifier_of_command));
+
   py::class_<Remote::TransportSecurity,
              std::shared_ptr<Remote::TransportSecurity>>(
       m, "TransportSecurity",
@@ -1815,6 +1879,10 @@ PYBIND11_MODULE(c104, m) {
                     &Object::DataPoint::setQuality,
                     ":ref:`c104.Quality`: Quality bitset object",
                     py::return_value_policy::copy)
+      .def_property("qoc", &Object::DataPoint::getQualifierOfCommand,
+                    &Object::DataPoint::setQualifierOfCommand,
+                    ":ref:`c104.QualifierOfCommand` : Qualifier of Command bitset object",
+                    py::return_value_policy::copy)
       .def_property("related_io_address",
                     &Object::DataPoint::getRelatedInformationObjectAddress,
                     &Object::DataPoint::setRelatedInformationObjectAddress,
@@ -1895,7 +1963,7 @@ PYBIND11_MODULE(c104, m) {
     point: :ref:`c104.Point`
         point instance
     previous_state: dict
-        dictionary containing the state of the point before the command took effect :code:`{"value": float, "quality": :ref:`c104.Quality`, updatedAt_ms: int}`
+        dictionary containing the state of the point before the command took effect :code:`{"value": float, "quality": :ref:`c104.Quality`, "qoc": :ref:`c104.QualifierOfCommand`, updatedAt_ms: int}`
     message: c104.IncomingMessage
         new command message
 
@@ -2022,9 +2090,9 @@ PYBIND11_MODULE(c104, m) {
 )def",
            py::return_value_policy::copy)
       .def("set", &Object::DataPoint::setValueEx, R"def(
-    set(self: c104.Point, value: float, quality: c104.Quality, timestamp_ms: int) -> None
+    set(self: c104.Point, value: float, quality: c104.Quality, qoc: c104.QualifierOfCommand, timestamp_ms: int) -> None
 
-    set value, quality and timestamp
+    set value, quality, qualifier of command and timestamp
 
     Parameters
     ----------
@@ -2032,6 +2100,8 @@ PYBIND11_MODULE(c104, m) {
         point value
     quality: :ref:`c104.Quality`
         quality restrictions if any
+    qoc: :ref:`c104.QualifierOfCommandP`
+        Qualifier of command for C_CS, C_DC and C_RC
     timestamp_ms: int
         modification timestamp in milliseconds
 
@@ -2043,7 +2113,7 @@ PYBIND11_MODULE(c104, m) {
     -------
     >>> sv_measurement_point.set(value=-1234.56, quality=c104.Quality.Invalid, timestamp_ms=int(time.time() * 1000))
 )def",
-           "value"_a, "quality"_a, "timestamp_ms"_a)
+           "value"_a, "quality"_a, "qoc"_a, "timestamp_ms"_a)
       .def("transmit", &Object::DataPoint::transmit, R"def(
     transmit(self: c104.Point, cause: c104.Cot = c104.Cot.UNKNOWN_COT) -> bool
 

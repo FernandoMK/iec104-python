@@ -240,6 +240,15 @@ enum class Quality {
 constexpr bool enum_bitmask(Quality &&);
 std::string Quality_toString(Quality quality);
 
+enum class QualifierOfCommand_ {
+  NoAdditionalDefinition = IEC60870_QOC_NO_ADDITIONAL_DEFINITION,
+  ShortPulse = IEC60870_QOC_SHORT_PULSE_DURATION,
+  LongPulse = IEC60870_QOC_LONG_PULSE_DURATION,
+  Persistent = IEC60870_QOC_PERSISTANT_OUTPUT
+};
+constexpr bool enum_bitmask(QualifierOfCommand_ &&);
+std::string QualifierOfCommand_toString(QualifierOfCommand_ qoc);
+
 enum InformationType {
   SINGLE,
   DOUBLE,

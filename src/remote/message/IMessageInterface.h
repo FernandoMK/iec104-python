@@ -167,6 +167,8 @@ public:
    */
   virtual Quality getQuality() const { return quality.load(); }
 
+  virtual QualifierOfCommand_ getQualifierOfCommand() const { return qoc.load(); }
+
 protected:
   IMessageInterface() = default;
 
@@ -194,6 +196,9 @@ protected:
 
   /// @brief IEC60870-5-104 describes the quality of the information
   std::atomic<Quality> quality{Quality::None};
+
+  /// @brief value qualifier of command
+  std::atomic<QualifierOfCommand_> qoc{QualifierOfCommand_::NoAdditionalDefinition};
 
   /// @brief ip:port connectionString of the used connection
   std::string connectionString{};

@@ -114,6 +114,9 @@ private:
   /// @brief value quality descriptor
   std::atomic<Quality> quality{Quality::None};
 
+  /// @brief value qualifier of command
+  std::atomic<QualifierOfCommand_> qoc{QualifierOfCommand_::NoAdditionalDefinition};
+
   /// @brief timestamp (in milliseconds) of last value assignment
   std::atomic_uint_fast64_t updatedAt_ms{0};
 
@@ -242,6 +245,17 @@ public:
   void setQuality(const Quality &new_quality);
 
   /**
+   * @brief Get qualifier of command for the current command
+   * @return qualifier of command
+  */
+  QualifierOfCommand_ getQualifierOfCommand() const;
+
+  /**
+   * @brief Set the qualifier of command for the current command
+  */
+  void setQualifierOfCommand(const QualifierOfCommand_ &new_qualifierOfCommand);
+
+  /**
    * @brief Get point value
    * @return value
    */
@@ -274,7 +288,7 @@ public:
    * @brief Set point value with quality restriction bitset and updated at
    * timestamp
    */
-  void setValueEx(double new_value, const Quality &new_quality,
+  void setValueEx(double new_value, const Quality &new_quality, const QualifierOfCommand_ &new_qoc,
                   std::uint_fast64_t timestamp_ms);
 
   /**

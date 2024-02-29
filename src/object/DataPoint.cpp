@@ -186,6 +186,19 @@ void DataPoint::setQuality(const Quality &new_quality) {
   }
 }
 
+QualifierOfCommand_ DataPoint::getQualifierOfCommand() const {return qoc.load(); }
+
+void DataPoint::setQualifierOfCommand(const QualifierOfCommand_ &new_qualifierOfCommand) {
+  QualifierOfCommand_ const prev_qualifierOfCommand = qoc.load();
+  if (prev_qualifierOfCommand != new_qualifierOfCommand) {
+    qoc.store(new_qualifierOfCommand);
+    DEBUG_PRINT(Debug::Point,
+                "set_qualifierOfCommand] prev: " + QualifierOfCommand_toString(prev_qualifierOfCommand) +
+                    ") new: " + QualifierOfCommand_toString(new_qualifierOfCommand) + " at IOA " +
+                    std::to_string(informationObjectAddress));
+  }
+}
+
 double DataPoint::getValue() const { return value; }
 
 std::int32_t DataPoint::getValueAsInt32() const { return (int)value; }
@@ -195,10 +208,10 @@ float DataPoint::getValueAsFloat() const { return (float)value; }
 std::uint32_t DataPoint::getValueAsUInt32() const { return (uint32_t)value; }
 
 void DataPoint::setValue(const double new_value) {
-  setValueEx(new_value, Quality::None, 0);
+  setValueEx(new_value, Quality::None, QualifierOfCommand_::NoAdditionalDefinition, 0);
 }
 
-void DataPoint::setValueEx(const double new_value, const Quality &new_quality,
+void DataPoint::setValueEx(const double new_value, const Quality &new_quality, const QualifierOfCommand_ &new_qoc,
                            const std::uint_fast64_t timestamp_ms) {
   // set predefined timestamp if provided (as client)
   if (timestamp_ms > 0) {
@@ -217,10 +230,12 @@ void DataPoint::setValueEx(const double new_value, const Quality &new_quality,
 
   double const val = value.load();
   Quality const qval = quality.load();
+  QualifierOfCommand_ const qocVal = qoc.load();
   if (val != new_value) {
     value.store(new_value);
   }
   quality.store(new_quality);
+  qoc.store(new_qoc);
 
   if (is_none(new_quality)) {
     switch (type) {
@@ -342,7 +357,7 @@ void DataPoint::setValueEx(const double new_value, const Quality &new_quality,
     }
   }
   DEBUG_PRINT(Debug::Point, "set_value_ex] prev: " + std::to_string(val) +
-                                " (" + Quality_toString(qval) + ") new: " +
+                                " (" + Quality_toString(qval) + QualifierOfCommand_toString(qocVal) + ") new: " +
                                 std::to_string(value.load()) + " (" +
                                 Quality_toString(new_quality) + ") at IOA " +
                                 std::to_string(informationObjectAddress));
@@ -430,9 +445,9 @@ CommandResponseState DataPoint::onReceive(
 
   // do not store a select command value
   if (!select_only) {
-    setValueEx(message->getValue(), message->getQuality(),
-               message->getUpdatedAt());
-    receivedAt_ms = GetTimestamp_ms();
+    setValueEx(message->getValue(), message->getQuality(), 
+               message->getQualifierOfCommand(), message->getUpdatedAt());
+               receivedAt_ms = GetTimestamp_ms();
   }
 
   if (py_onReceive.is_set()) {

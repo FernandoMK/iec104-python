@@ -116,6 +116,23 @@ std::string Quality_toString(Quality quality) {
          " }, is_good: False";
 }
 
+std::string QualifierOfCommand_toString(QualifierOfCommand_ qoc) {
+  std::vector<std::string> sv{};
+  if (qoc == QualifierOfCommand_::NoAdditionalDefinition)
+    sv.emplace_back("NoAdditionalDefinition");
+  if (qoc == QualifierOfCommand_::ShortPulse)
+    sv.emplace_back("ShortPulse");
+  if (qoc == QualifierOfCommand_::LongPulse)
+    sv.emplace_back("LongPulse");
+  if (qoc == QualifierOfCommand_::Persistent)
+    sv.emplace_back("Persistent");
+  return "Qualifier of Command set: { " +
+         std::accumulate(std::next(sv.begin()), sv.end(), sv[0],
+                         [](const std::string &a, const std::string &b) {
+                           return a + " | " + b;
+                         });
+}
+
 std::string ConnectionState_toString(const ConnectionState state) {
   switch (state) {
   case CLOSED:

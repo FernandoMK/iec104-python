@@ -47,14 +47,14 @@ PointCommand::PointCommand(std::shared_ptr<Object::DataPoint> point,
   case C_SC_NA_1: {
     io = (InformationObject)SingleCommand_create(
         nullptr, informationObjectAddress, (bool)value.load(), select,
-        static_cast<uint8_t>(quality.load()));
+        static_cast<uint8_t>(qoc.load()));
   } break;
 
     // bool Single Point Command + Extended Time
   case C_SC_TA_1: {
     io = (InformationObject)SingleCommandWithCP56Time2a_create(
         nullptr, informationObjectAddress, (bool)value.load(), select,
-        static_cast<uint8_t>(quality.load()), &time);
+        static_cast<uint8_t>(qoc.load()), &time);
   } break;
 
     // enum Double Point Command [INVALID|OFF|ON|INVALID]
@@ -62,7 +62,7 @@ PointCommand::PointCommand(std::shared_ptr<Object::DataPoint> point,
     auto state = (DoublePointValue)value.load();
     io = (InformationObject)DoubleCommand_create(
         nullptr, informationObjectAddress, state, select,
-        static_cast<uint8_t>(quality.load()));
+        static_cast<uint8_t>(qoc.load()));
   } break;
 
     // enum Double Point Command [INVALID|OFF|ON|INVALID] + Extended Time
@@ -70,7 +70,7 @@ PointCommand::PointCommand(std::shared_ptr<Object::DataPoint> point,
     auto state = (DoublePointValue)value.load();
     io = (InformationObject)DoubleCommandWithCP56Time2a_create(
         nullptr, informationObjectAddress, state, select,
-        static_cast<uint8_t>(quality.load()), &time);
+        static_cast<uint8_t>(qoc.load()), &time);
   } break;
 
     // int [INVALID,LOWER,HIGHER,INVALID] Regulating StepPosition Command
@@ -79,7 +79,7 @@ PointCommand::PointCommand(std::shared_ptr<Object::DataPoint> point,
     auto state = (StepCommandValue)value.load();
     io = (InformationObject)StepCommand_create(
         nullptr, informationObjectAddress, state, select,
-        static_cast<uint8_t>(quality.load()));
+        static_cast<uint8_t>(qoc.load()));
   } break;
 
     // int [INVALID,LOWER,HIGHER,INVALID] Regulating StepPosition Command
@@ -88,7 +88,7 @@ PointCommand::PointCommand(std::shared_ptr<Object::DataPoint> point,
     auto state = (StepCommandValue)value.load();
     io = (InformationObject)StepCommandWithCP56Time2a_create(
         nullptr, informationObjectAddress, state, select,
-        static_cast<uint8_t>(quality.load()), &time);
+        static_cast<uint8_t>(qoc.load()), &time);
   } break;
 
     //[0,2^32] BitString Command 32bits

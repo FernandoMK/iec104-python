@@ -48,6 +48,7 @@ OutgoingMessage::OutgoingMessage(std::shared_ptr<Object::DataPoint> point)
 
   type = point->getType();
   quality = point->getQuality();
+  qoc = point->getQualifierOfCommand();
   value = point->getValue();
 
   causeOfTransmission = CS101_COT_UNKNOWN_COT;
